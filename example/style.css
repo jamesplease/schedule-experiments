@@ -1,0 +1,136 @@
+html, body {
+  font-family: Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+header {
+  height: 100px;
+  line-height: 100px;
+  padding: 0 20px;
+  display: flex;
+}
+
+header .button-group {
+  margin-left: auto;
+}
+
+.button-group button {
+  cursor: pointer;
+  background-color: #f5f5f5;
+  color: #444;
+  border: 1px solid #ccc;
+  padding: 8px 13px;
+  border-radius: 3px;
+  margin: 0 4px;
+}
+
+.button-group button:hover {
+  background-color: #e2e2e2;
+  border-color: #bebebe;
+  color: #252525;
+}
+
+.notification {
+  color: #555;
+  font-size: 14px;
+  text-align: center;
+  margin: 100px auto 0;
+  width: 450px;
+  padding: 15px;
+  background-color: #ececec;
+  border: 1px solid #e1e1e1;
+  border-radius: 4px;
+}
+
+.notification p {
+  padding: 3px;
+  margin: 0;
+}
+
+header h1 {
+  -webkit-align-self: flex-start;
+  align-self: flex-start;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  line-height: 100px;
+}
+
+main {
+  height: calc(100% - 100px);
+  position: absolute;
+  top: 100px;
+  width: 100%;
+  background: #fafafa;
+}
+
+.div-experiment {
+  overflow: scroll;
+}
+
+.div-experiment .chart-container {
+  position: relative;
+  width: 4000px;
+  height: 4000px;
+}
+
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.cell {
+  position: absolute;
+}
+
+.native-scrollbar {
+  position: absolute;
+  height: calc(100% - 13px);
+  width: calc(100% - 13px);
+  overflow: scroll;
+}
+
+.native-vertical-scrollbar {
+  right: 0;
+  width: 13px;
+  border-left: 1px solid #ddd;
+}
+.native-vertical-scrollbar div {
+  width: 13px;
+  height: 4000px;
+  border-top: 1px solid #ddd;
+}
+
+.native-horizontal-scrollbar {
+  bottom: 0;
+  height: 13px;
+}
+.native-horizontal-scrollbar div {
+  height: 13px;
+  width: 4000px;
+}
+
+/* Let's get this party started */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    border-radius: 3px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+    background: rgba(0,0,0,0.3);
+}
+::-webkit-scrollbar-thumb:window-inactive {
+  background: rgba(0,0,0,0.2);
+}
