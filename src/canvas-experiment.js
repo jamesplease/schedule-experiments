@@ -1,6 +1,6 @@
 import Buttons from './buttons';
-import clearPage from './clear-page';
+import resetPage from './reset-page';
 
 var buttons = new Buttons();
 
-clearPage();
+resetPage();

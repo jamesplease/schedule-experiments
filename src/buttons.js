@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import clearPage from './clear-page';
+import resetPage from './reset-page';
 import DivExperiment from './experiments/divs';
 import CanvasExperiment from './experiments/canvas';
 
@@ -40,7 +40,7 @@ _.extend(Buttons.prototype, {
       targetExperiment.render();
       this.currentExperiment = targetExperiment;
     } else {
-      clearPage();
+      resetPage();
     }
   }
 });
