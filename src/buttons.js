@@ -33,7 +33,9 @@ _.extend(Buttons.prototype, {
   swapExperiment(experiment) {
     // Teardown the current experiment, if it exists
     _.result(this.currentExperiment, 'teardown');
+    // Render the new experiment, if one is specified
     if (_.isString(experiment)) {
+      document.getElementsByClassName('chart-container')[0].innerHTML = '';
       var targetExperiment = this[`${experiment}Experiment`];
       targetExperiment.render();
       this.currentExperiment = targetExperiment;
