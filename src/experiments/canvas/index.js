@@ -53,8 +53,8 @@ _.extend(Experiment.prototype, {
       newTop = $vertScrollBar.scrollTop() - e.originalEvent.wheelDeltaY / 2;
       newLeft = $horizScrollBar.scrollLeft() - e.originalEvent.wheelDeltaX / 2;
 
-      newTop = clamp(newTop, 0, 4000);
-      newLeft = clamp(newLeft, 0, 4000);
+      newTop = clamp(newTop, 0, 3300);
+      newLeft = clamp(newLeft, 0, 3050);
       $vertScrollBar.scrollTop(newTop);
       $horizScrollBar.scrollLeft(newLeft);
       $vertScrollBar.trigger('scroll');
