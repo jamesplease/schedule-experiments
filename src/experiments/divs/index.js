@@ -1,16 +1,14 @@
 import _ from 'lodash';
-import $ from 'jquery';
 import RectangleDiv from './rectangle-div';
 
-var $main = $('main');
-var $container = $('.chart-container');
-var newRectangle = new RectangleDiv();
+var mainEl = document.getElementsByTagName('main')[0];
+var containerEl = document.getElementsByClassName('chart-container')[0];
 
 function Experiment() {}
 
 _.extend(Experiment.prototype, {
   render() {
-    $('main')[0].className = 'div-experiment';
+    mainEl.className = 'div-experiment';
     var count = 10000;
     var rects = [];
     var now = performance.now();
@@ -22,13 +20,12 @@ _.extend(Experiment.prototype, {
     rects.forEach(rect => {
       fragment.appendChild(rect.el);
     });
-    $container[0].appendChild(fragment);
+    containerEl.appendChild(fragment);
     console.log('Divs end:', performance.now() - now);
   },
 
-  teardown() {
-
-  }
+  // At the moment, no teardown is necessary for this section
+  teardown() {}
 });
 
 export default Experiment;

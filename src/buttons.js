@@ -1,9 +1,10 @@
+// This module is for the buttons at the top of the page. It's the control panel
+// for this application.
 import _ from 'lodash';
 import resetPage from './reset-page';
 import DivExperiment from './experiments/divs';
 import CanvasExperiment from './experiments/canvas';
 
-// These are the buttons at the top of the page
 function Buttons() {
   this.setUi();
   this.createExperiments();
