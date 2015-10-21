@@ -1,8 +1,8 @@
 import $ from 'jquery';
 import Rectangle from './rectangle';
 
-const container = document.getElementsByClassName('chart-container')[0];
-var $main = $('main');
+const mainEl = document.getElementsByTagName('main')[0];
+const containerEl = document.getElementsByClassName('chart-container')[0];
 
 var clamp = function(num, min, max) {
   if (typeof min !== 'undefined' && num < min) {
@@ -18,66 +18,78 @@ var template = `<canvas></canvas>
       <div class='native-scrollbar native-vertical-scrollbar'><div></div></div>
       <div class='native-scrollbar native-horizontal-scrollbar'><div></div></div>`;
 
-function Experiment() {}
+function Experiment() {
+  // Binding in the constructor is required so that I can keep the reference for removing
+  // the event listener later on.
+  this.onScroll = _.bind(this.onScroll, this);
+}
 
 _.extend(Experiment.prototype, {
   render() {
-    container.innerHTML = template;
-    $('main')[0].className = 'canvas-experiment';
-    var $canvas = $('canvas');
-    var $vertScrollBar = $('.native-vertical-scrollbar');
-    var $horizScrollBar = $('.native-horizontal-scrollbar');
+    containerEl.innerHTML = template;
+    mainEl.className = 'canvas-experiment';
+    var canvasEl = document.getElementsByTagName('canvas')[0];
+    this.$vertScrollBar = $('.native-vertical-scrollbar');
+    this.$horizScrollBar = $('.native-horizontal-scrollbar');
 
-    $canvas[0].height = $main.height();
-    $canvas[0].width = $main.width();
+    canvasEl.height = mainEl.offsetHeight;
+    canvasEl.width = mainEl.offsetWidth;
 
-    var canvas = $canvas[0];
-    this.$canvas = $canvas;
-    var ctx = canvas.getContext('2d');
+    this.canvasEl = canvasEl;
+    this.ctx = canvasEl.getContext('2d');
 
     var now = performance.now();
-    var rectangles = [];
+    this.rectangles = [];
     for (var i = 0; i < 10000; i++) {
-      rectangles.push(new Rectangle(ctx));
-    }
-    function reposition(offset = {}) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      rectangles.forEach(rect => rect.draw(offset));
+      this.rectangles.push(new Rectangle(this.ctx));
     }
 
-    reposition();
+    this.reposition();
 
-    var handlingScroll = false;
-    var newTop, newLeft;
-    function onScroll(e) {
-      newTop = $vertScrollBar.scrollTop() - e.originalEvent.wheelDeltaY / 2;
-      newLeft = $horizScrollBar.scrollLeft() - e.originalEvent.wheelDeltaX / 2;
-
-      newTop = clamp(newTop, 0, 3300);
-      newLeft = clamp(newLeft, 0, 3050);
-      $vertScrollBar.scrollTop(newTop);
-      $horizScrollBar.scrollLeft(newLeft);
-      $vertScrollBar.trigger('scroll');
-      $horizScrollBar.trigger('scroll');
-      reposition({
-        offsetY: newTop,
-        offsetX: newLeft
-      });
-      handlingScroll = false;
-    }
-
-    this.$canvas.on('mousewheel', e => {
-      if (handlingScroll) { return; }
-      handlingScroll = true;
-      onScroll(e);
-    });
+    canvasEl.addEventListener("mousewheel", this.onScroll, false);
+    canvasEl.addEventListener("DOMMouseScroll", this.onScroll, false);
 
     console.log('Canvas performance:', performance.now() - now);
   },
 
+  reposition(offset = {}) {
+    this.ctx.clearRect(0, 0, this.canvasEl.width, this.canvasEl.height);
+    this.rectangles.forEach(rect => rect.draw(offset));
+  },
+
+  handlingScroll: false,
+
+  onScroll(e) {
+    if (this.handlingScroll) { return; }
+    this.handlingScroll = true;
+    this._onScroll(e);
+  },
+
+  _onScroll(e) {
+    var newTop = this.$vertScrollBar[0].scrollTop - e.wheelDeltaY / 2;
+    var newLeft = this.$horizScrollBar[0].scrollLeft - e.wheelDeltaX / 2;
+
+    newTop = clamp(newTop, 0, 3300);
+    newLeft = clamp(newLeft, 0, 3050);
+    this.$vertScrollBar.scrollTop(newTop);
+    this.$horizScrollBar.scrollLeft(newLeft);
+    this.$vertScrollBar.trigger('scroll');
+    this.$horizScrollBar.trigger('scroll');
+    this.reposition({
+      offsetY: newTop,
+      offsetX: newLeft
+    });
+    this.handlingScroll = false;
+  },
+
   teardown() {
-    _.result(this.$canvas, 'off');
-    delete this.$canvas;
+    this.rectangles = [];
+    if (this.canvasEl) {
+      this.canvasEl.removeEventListener('mousewheel', this.onScroll);
+      this.canvasEl.removeEventListener('DOMMouseScroll', this.onScroll);
+      delete this.canvasEl;
+      delete this.context;
+    }
   }
 });
 
