@@ -18,56 +18,67 @@ var template = `<canvas></canvas>
       <div class='native-scrollbar native-vertical-scrollbar'><div></div></div>
       <div class='native-scrollbar native-horizontal-scrollbar'><div></div></div>`;
 
-function render() {
-  container.innerHTML = template;
-  $('main')[0].className = 'canvas-experiment';
-  var $canvas = $('canvas');
-  var $vertScrollBar = $('.native-vertical-scrollbar');
-  var $horizScrollBar = $('.native-horizontal-scrollbar');
+function Experiment() {}
 
-  $canvas[0].height = $main.height();
-  $canvas[0].width = $main.width();
+_.extend(Experiment.prototype, {
+  render() {
+    container.innerHTML = template;
+    $('main')[0].className = 'canvas-experiment';
+    var $canvas = $('canvas');
+    var $vertScrollBar = $('.native-vertical-scrollbar');
+    var $horizScrollBar = $('.native-horizontal-scrollbar');
 
-  var canvas = $canvas[0];
-  var ctx = canvas.getContext('2d');
+    $canvas[0].height = $main.height();
+    $canvas[0].width = $main.width();
 
-  var now = performance.now();
-  var rectangles = [];
-  for (var i = 0; i < 10000; i++) {
-    rectangles.push(new Rectangle(ctx));
-  }
-  function reposition(offset = {}) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    rectangles.forEach(rect => rect.draw(offset));
-  }
-  console.log('Canvas performance:', performance.now() - now);
+    var canvas = $canvas[0];
+    this.$canvas = $canvas;
+    var ctx = canvas.getContext('2d');
 
-  var handlingScroll = false;
-  var newTop, newLeft;
-  function onScroll(e) {
-    newTop = $vertScrollBar.scrollTop() - e.originalEvent.wheelDeltaY / 2;
-    newLeft = $horizScrollBar.scrollLeft() - e.originalEvent.wheelDeltaX / 2;
+    var now = performance.now();
+    var rectangles = [];
+    for (var i = 0; i < 10000; i++) {
+      rectangles.push(new Rectangle(ctx));
+    }
+    function reposition(offset = {}) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      rectangles.forEach(rect => rect.draw(offset));
+    }
 
-    newTop = clamp(newTop, 0, 4000);
-    newLeft = clamp(newLeft, 0, 4000);
-    $vertScrollBar.scrollTop(newTop);
-    $horizScrollBar.scrollLeft(newLeft);
-    $vertScrollBar.trigger('scroll');
-    $horizScrollBar.trigger('scroll');
-    reposition({
-      offsetY: newTop,
-      offsetX: newLeft
+    reposition();
+
+    var handlingScroll = false;
+    var newTop, newLeft;
+    function onScroll(e) {
+      newTop = $vertScrollBar.scrollTop() - e.originalEvent.wheelDeltaY / 2;
+      newLeft = $horizScrollBar.scrollLeft() - e.originalEvent.wheelDeltaX / 2;
+
+      newTop = clamp(newTop, 0, 4000);
+      newLeft = clamp(newLeft, 0, 4000);
+      $vertScrollBar.scrollTop(newTop);
+      $horizScrollBar.scrollLeft(newLeft);
+      $vertScrollBar.trigger('scroll');
+      $horizScrollBar.trigger('scroll');
+      reposition({
+        offsetY: newTop,
+        offsetX: newLeft
+      });
+      handlingScroll = false;
+    }
+
+    this.$canvas.on('mousewheel', e => {
+      if (handlingScroll) { return; }
+      handlingScroll = true;
+      onScroll(e);
     });
-    handlingScroll = false;
+
+    console.log('Canvas performance:', performance.now() - now);
+  },
+
+  teardown() {
+    _.result(this.$canvas, 'off');
+    delete this.$canvas;
   }
+});
 
-  $canvas.on('mousewheel', e => {
-    if (handlingScroll) { return; }
-    handlingScroll = true;
-    onScroll(e);
-  });
-
-  reposition();
-}
-
-export default render;
+export default Experiment;
